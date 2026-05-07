@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  role      Role     @default(HEALTH_WORKER)
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  HEALTH_WORKER
+  VILLAGE_HEAD
+}
+
+model Patient {
+  id             String          @id @default(uuid()) // Can also be manual string like NIK
+  name           String
+  age            Int
+  gender         Gender
+  address        String
+  phone          String?
+  medicalRecords MedicalRecord[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model MedicalRecord {
+  id             String   @id @default(uuid())
+  patientId      String
+  patient        Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  date           DateTime @default(now())
+  bloodPressure  String   // e.g., "120/80"
+  bloodSugar     Float
+  cholesterol    Float
+  weight         Float
+  height         Float
+  smokingStatus  Boolean
+  activityLevel  ActivityLevel
+  notes          String?
+  createdAt      DateTime @default(now())
+}
+
+enum ActivityLevel {
+  LOW
+  MODERATE
+  HIGH
+}
