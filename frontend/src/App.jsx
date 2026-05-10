@@ -14,7 +14,7 @@ import Settings from './pages/Settings';
 import Landing from './pages/Landing';
 
 const RoleBasedRedirect = ({ user }) => {
-  if (!user) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/" />;
   if (user.role === 'ADMIN') return <Navigate to="/admin/dashboard" replace />;
   if (user.role === 'HEALTH_WORKER') return <Navigate to="/petugas/dashboard" replace />;
   if (user.role === 'VILLAGE_HEAD') return <Navigate to="/kepala-desa/dashboard" replace />;
@@ -23,7 +23,7 @@ const RoleBasedRedirect = ({ user }) => {
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/" />;
   if (allowedRoles && !allowedRoles.includes(user.role)) return <RoleBasedRedirect user={user} />;
   return children;
 };

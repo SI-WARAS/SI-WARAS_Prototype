@@ -9,16 +9,19 @@ import Modal from '../components/ui/Modal';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useAuth } from '../context/AuthContext';
+import { getBasePath } from '../utils/roleHelpers';
+import Input from '../components/ui/Input';
+import Select from '../components/ui/Select';
+
+const PADUKUHAN_LIST = [
+  'Gluntung Kidul', 'Gumulan', 'Tegalsempu', 'Tunjungan', 'Krapakan', 
+  'Samparan', 'Tegallayang 9', 'Tegallayang 10', 'Kuroboyo', 'Korowelang', 
+  'Glagahan', 'Bogem', 'Banyuurip', 'Gluntung Lor'
+];
 
 const Patients = () => {
   const { user } = useAuth();
   
-  const getBasePath = (role) => {
-    if (role === 'ADMIN') return '/admin';
-    if (role === 'HEALTH_WORKER') return '/petugas';
-    if (role === 'VILLAGE_HEAD') return '/kepala-desa';
-    return '';
-  };
   const basePath = getBasePath(user?.role);
 
   const queryClient = useQueryClient();
@@ -99,22 +102,55 @@ const Patients = () => {
     onError: () => toast.error('Failed to delete patient')
   });
 
-  const onSubmitAdd = (data) => addMutation.mutate({ ...data, age: parseInt(data.age) });
-  const onSubmitEdit = (data) => editMutation.mutate({ id: editPatient.id, data: { ...data, age: parseInt(data.age) } });
+  const onSubmitAdd = (data) => {
+    const address = data.detailAddress ? `${data.padukuhan}, ${data.detailAddress}` : data.padukuhan;
+    const submitData = { ...data, address, age: parseInt(data.age) };
+    delete submitData.padukuhan;
+    delete submitData.detailAddress;
+    addMutation.mutate(submitData);
+  };
+
+  const onSubmitEdit = (data) => {
+    const address = data.detailAddress ? `${data.padukuhan}, ${data.detailAddress}` : data.padukuhan;
+    const submitData = { ...data, address, age: parseInt(data.age) };
+    delete submitData.padukuhan;
+    delete submitData.detailAddress;
+    editMutation.mutate({ id: editPatient.id, data: submitData });
+  };
 
   const openEditModal = (patient) => {
     setEditPatient(patient);
+    let matchedPadukuhan = '';
+    let detailAddress = patient.address;
+
+    for (const p of PADUKUHAN_LIST) {
+      if (patient.address.toLowerCase().includes(p.toLowerCase())) {
+        matchedPadukuhan = p;
+        // Strip out the padukuhan name from the detail address for cleaner editing
+        detailAddress = patient.address.replace(new RegExp(`^${p}[,\\s]*`, 'i'), '').trim();
+        break;
+      }
+    }
+
     resetEdit({
       name: patient.name,
       age: patient.age,
       gender: patient.gender,
-      address: patient.address,
+      padukuhan: matchedPadukuhan,
+      detailAddress: detailAddress,
       phone: patient.phone || ''
     });
   };
 
-  const inputClass = "w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-[13px] bg-white hover:bg-slate-50 transition-all duration-200 outline-none";
-  const labelClass = "block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider";
+  const genderOptions = [
+    { value: 'MALE', label: 'Laki-laki' },
+    { value: 'FEMALE', label: 'Perempuan' }
+  ];
+
+  const padukuhanOptions = [
+    { value: '', label: 'Pilih Padukuhan...' },
+    ...PADUKUHAN_LIST.map(p => ({ value: p, label: p }))
+  ];
 
   return (
     <motion.div 
@@ -124,15 +160,15 @@ const Patients = () => {
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Patients Directory</h1>
-          <p className="text-[13px] text-slate-500 mt-1">Manage and monitor registered patients.</p>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Direktori Pasien</h1>
+          <p className="text-[13px] text-slate-500 mt-1">Kelola dan pantau pasien yang terdaftar.</p>
         </div>
         <button 
           onClick={() => setIsAddModalOpen(true)}
           className="flex items-center px-4 py-2 bg-rose-600 text-white text-[13px] font-medium rounded-lg hover:bg-rose-700 transition-colors shadow-sm outline-none"
         >
           <UserPlus className="w-4 h-4 mr-2" />
-          Add Patient
+          Tambah Pasien
         </button>
       </div>
 
@@ -142,7 +178,7 @@ const Patients = () => {
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 transform -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search by ID, Name..."
+              placeholder="Cari ID, Nama..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -157,7 +193,7 @@ const Patients = () => {
               className={`flex items-center px-3 py-2 border text-[13px] font-medium rounded-lg transition-colors outline-none ${showFilter ? 'border-rose-500 text-rose-600 bg-rose-50' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
             >
               <Filter className={`w-4 h-4 mr-2 ${showFilter ? 'text-rose-500' : 'text-slate-400'}`} />
-              Sort & Filter
+              Urut & Filter
             </button>
             <AnimatePresence>
               {showFilter && (
@@ -167,10 +203,10 @@ const Patients = () => {
                   exit={{ opacity: 0, y: 10 }}
                   className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 shadow-lg rounded-xl z-20 p-2"
                 >
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Sort By</div>
-                  <button onClick={() => {handleSort('name'); setShowFilter(false)}} className="w-full text-left px-2 py-1.5 text-[13px] hover:bg-slate-50 rounded-md text-slate-700">Name</button>
-                  <button onClick={() => {handleSort('age'); setShowFilter(false)}} className="w-full text-left px-2 py-1.5 text-[13px] hover:bg-slate-50 rounded-md text-slate-700">Age</button>
-                  <button onClick={() => {handleSort('createdAt'); setShowFilter(false)}} className="w-full text-left px-2 py-1.5 text-[13px] hover:bg-slate-50 rounded-md text-slate-700">Registration Date</button>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Urut Berdasarkan</div>
+                  <button onClick={() => {handleSort('name'); setShowFilter(false)}} className="w-full text-left px-2 py-1.5 text-[13px] hover:bg-slate-50 rounded-md text-slate-700">Nama</button>
+                  <button onClick={() => {handleSort('age'); setShowFilter(false)}} className="w-full text-left px-2 py-1.5 text-[13px] hover:bg-slate-50 rounded-md text-slate-700">Umur</button>
+                  <button onClick={() => {handleSort('createdAt'); setShowFilter(false)}} className="w-full text-left px-2 py-1.5 text-[13px] hover:bg-slate-50 rounded-md text-slate-700">Tanggal Daftar</button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -182,18 +218,18 @@ const Patients = () => {
             <thead className="sticky top-0 z-10 bg-white">
               <tr className="text-slate-400 text-[11px] uppercase tracking-wider font-bold border-b border-slate-100/80">
                 <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('name')}>
-                  Name & Contact <SortIcon field="name" />
+                  Nama & Kontak <SortIcon field="name" />
                 </th>
                 <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('id')}>
                   ID (NIK) <SortIcon field="id" />
                 </th>
                 <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('age')}>
-                  Age & Gender <SortIcon field="age" />
+                  Umur & J.Kelamin <SortIcon field="age" />
                 </th>
                 <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('address')}>
-                  Address <SortIcon field="address" />
+                  Alamat <SortIcon field="address" />
                 </th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50/50">
@@ -208,7 +244,7 @@ const Patients = () => {
                   </tr>
                 ))
               ) : patients.length === 0 ? (
-                <tr><td colSpan="5" className="p-12 text-center text-slate-400 text-[13px] font-medium">No patients found.</td></tr>
+                <tr><td colSpan="5" className="p-12 text-center text-slate-400 text-[13px] font-medium">Tidak ada pasien ditemukan.</td></tr>
               ) : (
                 patients.map((patient) => (
                   <tr key={patient.id} className="hover:bg-slate-50/50 transition-colors group bg-white">
@@ -218,12 +254,12 @@ const Patients = () => {
                       </div>
                       <div>
                         <div className="font-semibold text-slate-800 text-[13px] group-hover:text-rose-600 transition-colors">{patient.name}</div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">{patient.phone || 'No phone'}</div>
+                        <div className="text-[11px] text-slate-400 mt-0.5">{patient.phone || 'Tanpa telepon'}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-slate-500 font-mono text-[12px]">{patient.id.substring(0, 8)}...</td>
                     <td className="px-6 py-4 text-[13px] text-slate-600">
-                      <span className="font-medium text-slate-700">{patient.age}</span> yrs • <span className="capitalize">{patient.gender.toLowerCase()}</span>
+                      <span className="font-medium text-slate-700">{patient.age}</span> thn • <span className="capitalize">{patient.gender === 'MALE' ? 'Laki-laki' : 'Perempuan'}</span>
                     </td>
                     <td className="px-6 py-4 text-[13px] text-slate-500 truncate max-w-xs">{patient.address}</td>
                     <td className="px-6 py-4 text-right space-x-1">
@@ -259,7 +295,7 @@ const Patients = () => {
         {/* Pagination Footer */}
         <div className="p-4 border-t border-slate-100/50 flex items-center justify-between bg-white shrink-0">
           <span className="text-[12px] font-medium text-slate-500">
-            Showing {patients.length > 0 ? (pagination.page - 1) * pagination.limit + 1 : 0} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} entries
+            Menampilkan {patients.length > 0 ? (pagination.page - 1) * pagination.limit + 1 : 0} hingga {Math.min(pagination.page * pagination.limit, pagination.total)} dari {pagination.total} entri
           </span>
           <div className="flex gap-2">
             <button 
@@ -267,107 +303,77 @@ const Patients = () => {
               disabled={page === 1}
               className="px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors flex items-center outline-none"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" /> Prev
+              <ChevronLeft className="w-4 h-4 mr-1" /> Sebel
             </button>
             <button 
               onClick={() => setPage(Math.min(pagination.totalPages, page + 1))}
               disabled={page === pagination.totalPages || pagination.totalPages === 0}
               className="px-3 py-1.5 border border-slate-200 rounded-lg text-[12px] font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:hover:bg-white transition-colors flex items-center outline-none"
             >
-              Next <ChevronRight className="w-4 h-4 ml-1" />
+              Lanjut <ChevronRight className="w-4 h-4 ml-1" />
             </button>
           </div>
         </div>
       </div>
 
       {/* Add Modal */}
-      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Register Patient">
+      <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Daftarkan Pasien">
         <form onSubmit={handleSubmit(onSubmitAdd)} className="space-y-5">
-          <div>
-            <label className={labelClass}>Full Name</label>
-            <input {...register("name", { required: true })} className={inputClass} placeholder="John Doe" />
-          </div>
+          <Input label="Nama Lengkap" {...register("name", { required: true })} placeholder="Budi Santoso" />
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Age</label>
-              <input type="number" {...register("age", { required: true })} className={inputClass} placeholder="e.g. 45" />
-            </div>
-            <div>
-              <label className={labelClass}>Gender</label>
-              <select {...register("gender", { required: true })} className={inputClass}>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-              </select>
-            </div>
+            <Input label="Umur" type="number" {...register("age", { required: true })} placeholder="Misal: 45" />
+            <Select label="Jenis Kelamin" options={genderOptions} {...register("gender", { required: true })} />
           </div>
-          <div>
-            <label className={labelClass}>Phone Number</label>
-            <input {...register("phone")} className={inputClass} placeholder="Optional" />
-          </div>
-          <div>
-            <label className={labelClass}>Address</label>
-            <textarea {...register("address", { required: true })} className={inputClass} rows="3" placeholder="Full address"></textarea>
+          <Input label="Nomor Telepon" {...register("phone")} placeholder="Opsional" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Select label="Padukuhan" options={padukuhanOptions} {...register("padukuhan", { required: true })} />
+            <Input label="Detail Alamat" {...register("detailAddress")} placeholder="RT/RW, Jalan (Opsional)" />
           </div>
           <div className="flex justify-end pt-5 mt-2 border-t border-slate-100">
-            <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg mr-2 transition-colors">Cancel</button>
+            <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg mr-2 transition-colors">Batal</button>
             <button type="submit" disabled={addMutation.isPending} className="px-5 py-2.5 text-[13px] font-medium bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors shadow-sm focus:ring-2 focus:ring-rose-500/20 outline-none">
-              {addMutation.isPending ? 'Saving...' : 'Save Patient'}
+              {addMutation.isPending ? 'Menyimpan...' : 'Simpan Pasien'}
             </button>
           </div>
         </form>
       </Modal>
 
       {/* Edit Modal */}
-      <Modal isOpen={!!editPatient} onClose={() => setEditPatient(null)} title="Update Patient">
+      <Modal isOpen={!!editPatient} onClose={() => setEditPatient(null)} title="Perbarui Pasien">
         <form onSubmit={handleSubmitEdit(onSubmitEdit)} className="space-y-5">
-          <div>
-            <label className={labelClass}>Full Name</label>
-            <input {...registerEdit("name", { required: true })} className={inputClass} />
-          </div>
+          <Input label="Nama Lengkap" {...registerEdit("name", { required: true })} />
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Age</label>
-              <input type="number" {...registerEdit("age", { required: true })} className={inputClass} />
-            </div>
-            <div>
-              <label className={labelClass}>Gender</label>
-              <select {...registerEdit("gender", { required: true })} className={inputClass}>
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-              </select>
-            </div>
+            <Input label="Umur" type="number" {...registerEdit("age", { required: true })} />
+            <Select label="Jenis Kelamin" options={genderOptions} {...registerEdit("gender", { required: true })} />
           </div>
-          <div>
-            <label className={labelClass}>Phone Number</label>
-            <input {...registerEdit("phone")} className={inputClass} />
-          </div>
-          <div>
-            <label className={labelClass}>Address</label>
-            <textarea {...registerEdit("address", { required: true })} className={inputClass} rows="3"></textarea>
+          <Input label="Nomor Telepon" {...registerEdit("phone")} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Select label="Padukuhan" options={padukuhanOptions} {...registerEdit("padukuhan", { required: true })} />
+            <Input label="Detail Alamat" {...registerEdit("detailAddress")} placeholder="RT/RW, Jalan (Opsional)" />
           </div>
           <div className="flex justify-end pt-5 mt-2 border-t border-slate-100">
-            <button type="button" onClick={() => setEditPatient(null)} className="px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg mr-2 transition-colors">Cancel</button>
+            <button type="button" onClick={() => setEditPatient(null)} className="px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg mr-2 transition-colors">Batal</button>
             <button type="submit" disabled={editMutation.isPending} className="px-5 py-2.5 text-[13px] font-medium bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors shadow-sm focus:ring-2 focus:ring-rose-500/20 outline-none">
-              {editMutation.isPending ? 'Updating...' : 'Update Details'}
+              {editMutation.isPending ? 'Memperbarui...' : 'Perbarui Detail'}
             </button>
           </div>
         </form>
       </Modal>
 
       {/* Delete Confirmation Modal */}
-      <Modal isOpen={!!deletePatientId} onClose={() => setDeletePatientId(null)} title="Delete Confirmation">
+      <Modal isOpen={!!deletePatientId} onClose={() => setDeletePatientId(null)} title="Konfirmasi Penghapusan">
         <div className="space-y-5">
-          <p className="text-[13px] text-slate-600 leading-relaxed">Are you sure you want to permanently delete this patient? All associated medical records will also be erased. This action cannot be undone.</p>
+          <p className="text-[13px] text-slate-600 leading-relaxed">Apakah Anda yakin ingin menghapus pasien ini secara permanen? Semua rekam medis yang terkait juga akan dihapus. Tindakan ini tidak dapat dibatalkan.</p>
           <div className="flex justify-end pt-5 border-t border-slate-100">
             <button onClick={() => setDeletePatientId(null)} className="px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg mr-2 transition-colors">
-              Cancel
+              Batal
             </button>
             <button 
               onClick={() => deleteMutation.mutate(deletePatientId)} 
               disabled={deleteMutation.isPending}
               className="px-5 py-2.5 text-[13px] font-medium bg-rose-600 text-white hover:bg-rose-700 rounded-lg transition-colors shadow-sm focus:ring-2 focus:ring-rose-500/20 outline-none"
             >
-              {deleteMutation.isPending ? 'Deleting...' : 'Yes, Delete Permanently'}
+              {deleteMutation.isPending ? 'Menghapus...' : 'Ya, Hapus Permanen'}
             </button>
           </div>
         </div>

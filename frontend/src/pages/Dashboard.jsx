@@ -37,6 +37,9 @@ const fetchStats = async () => {
 
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { getBasePath } from '../utils/roleHelpers';
+import toast from 'react-hot-toast';
+import { exportDashboardToPDF } from '../utils/exportUtils';
 
 const StatCard = ({ title, value, icon: Icon, colorClass, changeStr, isPositive, to }) => (
   <motion.div 
@@ -66,12 +69,6 @@ const StatCard = ({ title, value, icon: Icon, colorClass, changeStr, isPositive,
 const Dashboard = () => {
   const { user } = useAuth();
   
-  const getBasePath = (role) => {
-    if (role === 'ADMIN') return '/admin';
-    if (role === 'HEALTH_WORKER') return '/petugas';
-    if (role === 'VILLAGE_HEAD') return '/kepala-desa';
-    return '';
-  };
   const basePath = getBasePath(user?.role);
 
   const { data, isLoading, isError } = useQuery({
@@ -80,7 +77,13 @@ const Dashboard = () => {
   });
 
   const handleExport = () => {
-    toast.success('Laporan dashboard berhasil diekspor!');
+    try {
+      exportDashboardToPDF(data);
+      toast.success('Laporan dashboard berhasil diekspor!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Gagal mengekspor laporan');
+    }
   };
 
   const handleAddWidget = () => {
@@ -124,7 +127,7 @@ const Dashboard = () => {
   };
 
   const lineData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
     datasets: [
       {
         label: 'Pasien Baru',
@@ -258,35 +261,37 @@ const Dashboard = () => {
 
         {/* Right Column (takes 1/3 width) */}
         <div className="flex flex-col gap-6">
-          <div className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-[14px] font-bold text-slate-800">Kasus Berdasarkan Wilayah</h3>
-              <button onClick={handleChartMenu} className="text-slate-400 hover:text-slate-600 px-2 rounded-md hover:bg-slate-50 transition-colors outline-none">•••</button>
-            </div>
-            <div className="h-[180px]">
-              <Bar data={barData} options={chartOptions} />
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50">
+          <div className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50 h-full flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-[14px] font-bold text-slate-800">Distribusi Penyakit</h3>
               <button onClick={handleChartMenu} className="text-slate-400 hover:text-slate-600 px-2 rounded-md hover:bg-slate-50 transition-colors outline-none">•••</button>
             </div>
-            <div className="h-[140px] flex justify-center items-center relative">
-              <Doughnut data={doughnutData} options={{...chartOptions, cutout: '75%'}} />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-[20px] font-bold text-slate-800">{ptmCases.hypertension + ptmCases.diabetes}</span>
-                <span className="text-[10px] text-slate-400 font-medium">Kasus Risiko</span>
+            <div className="flex-1 flex flex-col justify-center">
+              <div className="h-[180px] flex justify-center items-center relative">
+                <Doughnut data={doughnutData} options={{...chartOptions, cutout: '75%'}} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-[24px] font-bold text-slate-800">{ptmCases.hypertension + ptmCases.diabetes}</span>
+                  <span className="text-[11px] text-slate-400 font-medium">Kasus Risiko</span>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-center gap-4 mt-4">
-              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-rose-500"></div><span className="text-[11px] text-slate-500">Hipertensi</span></div>
-              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-orange-400"></div><span className="text-[11px] text-slate-500">Diabetes</span></div>
+              <div className="flex justify-center gap-4 mt-6">
+                <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div><span className="text-[12px] font-medium text-slate-500">Hipertensi</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-orange-400"></div><span className="text-[12px] font-medium text-slate-500">Diabetes</span></div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Full Width Area */}
+      <div className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-[14px] font-bold text-slate-800">Kasus Berdasarkan Wilayah (Padukuhan)</h3>
+          <button onClick={handleChartMenu} className="text-slate-400 hover:text-slate-600 px-2 rounded-md hover:bg-slate-50 transition-colors outline-none">•••</button>
+        </div>
+        <div className="h-[220px]">
+          <Bar data={barData} options={{...chartOptions, maintainAspectRatio: false}} />
+        </div>
       </div>
     </motion.div>
   );

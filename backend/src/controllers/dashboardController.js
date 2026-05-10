@@ -18,14 +18,28 @@ exports.getStats = async (req, res) => {
 
     let hypertensionCount = 0;
     let diabetesCount = 0;
+    let otherCasesCount = 0;
+    
+    const PADUKUHAN_LIST = [
+      'Gluntung Kidul', 'Gumulan', 'Tegalsempu', 'Tunjungan', 'Krapakan', 
+      'Samparan', 'Tegallayang 9', 'Tegallayang 10', 'Kuroboyo', 'Korowelang', 
+      'Glagahan', 'Bogem', 'Banyuurip', 'Gluntung Lor'
+    ];
     
     const dusunStats = {};
+    PADUKUHAN_LIST.forEach(dusun => { dusunStats[dusun] = 0; });
+    dusunStats['Lainnya'] = 0;
 
     patients.forEach(p => {
-      // Area stats (assuming dusun name is part of address)
-      const dusunMatch = p.address.match(/Dusun\s+([A-Za-z0-9]+)/i);
-      const dusun = dusunMatch ? dusunMatch[0] : 'Unknown';
-      dusunStats[dusun] = (dusunStats[dusun] || 0) + 1;
+      // Area stats matching against exact padukuhan names
+      let matchedDusun = 'Lainnya';
+      for (const dusun of PADUKUHAN_LIST) {
+        if (p.address && p.address.toLowerCase().includes(dusun.toLowerCase())) {
+          matchedDusun = dusun;
+          break;
+        }
+      }
+      dusunStats[matchedDusun]++;
 
       // Disease stats based on latest record
       if (p.medicalRecords.length > 0) {
@@ -33,10 +47,24 @@ exports.getStats = async (req, res) => {
         
         // Hypertension logic (systolic >= 140 or diastolic >= 90)
         const [sys, dia] = latest.bloodPressure.split('/').map(Number);
-        if (sys >= 140 || dia >= 90) hypertensionCount++;
+        let hasHtn = false;
+        if (sys >= 140 || dia >= 90) {
+          hypertensionCount++;
+          hasHtn = true;
+        }
 
         // Diabetes logic (random blood sugar >= 200)
-        if (latest.bloodSugar >= 200) diabetesCount++;
+        let hasDm = false;
+        if (latest.bloodSugar >= 200) {
+          diabetesCount++;
+          hasDm = true;
+        }
+        
+        if (!hasHtn && !hasDm) {
+          otherCasesCount++;
+        }
+      } else {
+        otherCasesCount++;
       }
     });
 
@@ -45,7 +73,7 @@ exports.getStats = async (req, res) => {
       ptmCases: {
         hypertension: hypertensionCount,
         diabetes: diabetesCount,
-        other: totalPatients - (hypertensionCount + diabetesCount) // Simplified
+        other: otherCasesCount
       },
       areaStats: dusunStats
     });

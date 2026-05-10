@@ -6,6 +6,9 @@
   --color-primary-dark: #be123c;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
+  --color-brand-primary: #9E1F63;
+  --color-brand-light: #FFD3F7;
+  --color-brand-bg: #F5F2EB;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', ui-serif, Georgia, serif;
 }

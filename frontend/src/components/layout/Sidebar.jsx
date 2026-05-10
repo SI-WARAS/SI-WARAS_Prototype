@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Users, Settings, LogOut, Activity, Menu, X, HelpCircle, FileText } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getBasePath } from '../../utils/roleHelpers';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -10,27 +11,21 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSupport, setShowSupport] = useState(true);
 
-  const getBasePath = (role) => {
-    if (role === 'ADMIN') return '/admin';
-    if (role === 'HEALTH_WORKER') return '/petugas';
-    if (role === 'VILLAGE_HEAD') return '/kepala-desa';
-    return '';
-  };
   const basePath = getBasePath(user?.role);
 
   const navItems = [
-    { name: 'Dashboard', path: `${basePath}/dashboard`, icon: Home },
+    { name: 'Beranda', path: `${basePath}/dashboard`, icon: Home },
   ];
 
   if (user?.role === 'ADMIN' || user?.role === 'HEALTH_WORKER') {
-    navItems.push({ name: 'Patients', path: `${basePath}/patients`, icon: Users });
-    navItems.push({ name: 'Medical Records', path: `${basePath}/records`, icon: Activity });
+    navItems.push({ name: 'Pasien', path: `${basePath}/patients`, icon: Users });
+    navItems.push({ name: 'Rekam Medis', path: `${basePath}/records`, icon: Activity });
   }
 
-  navItems.push({ name: 'Reports', path: `${basePath}/reports`, icon: FileText });
+  navItems.push({ name: 'Laporan', path: `${basePath}/reports`, icon: FileText });
 
   if (user?.role === 'ADMIN') {
-    navItems.push({ name: 'Settings', path: `${basePath}/settings`, icon: Settings });
+    navItems.push({ name: 'Pengaturan', path: `${basePath}/settings`, icon: Settings });
   }
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -87,12 +82,12 @@ const Sidebar = () => {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <h4 className="font-semibold text-[13px] relative z-10">Need Support?</h4>
+            <h4 className="font-semibold text-[13px] relative z-10">Butuh Bantuan?</h4>
             <p className="text-[11px] text-rose-100 mt-1 mb-4 relative z-10 leading-relaxed">
-              Contact administrator for system assistance or premium features.
+              Hubungi administrator untuk bantuan sistem atau fitur premium.
             </p>
             <button className="w-full py-2 bg-white/10 hover:bg-white text-white hover:text-rose-700 text-[11px] font-bold rounded-lg transition-colors border border-white/20 hover:border-transparent relative z-10">
-              Contact Admin
+              Hubungi Admin
             </button>
           </div>
         )}
@@ -103,7 +98,7 @@ const Sidebar = () => {
             className="flex items-center w-full px-3 py-2.5 text-[13px] text-slate-500 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors duration-200 group font-medium"
           >
             <LogOut className="w-4 h-4 mr-3 text-slate-400 group-hover:text-rose-500 transition-colors" />
-            <span>Logout</span>
+            <span>Keluar</span>
           </button>
         </div>
       </div>

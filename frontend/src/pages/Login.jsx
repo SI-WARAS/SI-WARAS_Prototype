@@ -47,23 +47,23 @@ const Login = () => {
             )}
 
             <div>
-              <label className="block text-[13px] font-semibold text-slate-700 mb-2">Username</label>
+              <label className="block text-[13px] font-semibold text-slate-700 mb-2">Nama Pengguna</label>
               <div className="relative rounded-xl shadow-sm">
                 <input
-                  {...register("username", { required: "Username is required" })}
+                  {...register("username", { required: "Nama Pengguna diperlukan" })}
                   className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-slate-900 bg-slate-50/50 hover:bg-white focus:bg-white sm:text-[13px] transition-all duration-200 outline-none"
-                  placeholder="Enter your username"
+                  placeholder="Masukkan nama pengguna"
                 />
               </div>
               {errors.username && <p className="mt-1.5 text-[12px] font-medium text-rose-500">{errors.username.message}</p>}
             </div>
 
             <div>
-              <label className="block text-[13px] font-semibold text-slate-700 mb-2">Password</label>
+              <label className="block text-[13px] font-semibold text-slate-700 mb-2">Kata Sandi</label>
               <div className="relative rounded-xl shadow-sm">
                 <input
                   type="password"
-                  {...register("password", { required: "Password is required" })}
+                  {...register("password", { required: "Kata Sandi diperlukan" })}
                   className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-slate-900 bg-slate-50/50 hover:bg-white focus:bg-white sm:text-[13px] transition-all duration-200 outline-none"
                   placeholder="••••••••"
                 />
@@ -82,17 +82,17 @@ const Login = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                ) : 'Sign In'}
+                ) : 'Masuk'}
               </button>
             </div>
           </form>
 
           <div className="mt-8 flex justify-center gap-6 text-slate-400 border-t border-slate-100 pt-6">
             <div className="flex items-center text-[11px] font-medium tracking-wide uppercase">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Secure Access
+              <ShieldCheck className="w-3.5 h-3.5 mr-1.5" /> Akses Aman
             </div>
             <div className="flex items-center text-[11px] font-medium tracking-wide uppercase">
-              <HeartPulse className="w-3.5 h-3.5 mr-1.5" /> Healthcare Standard
+              <HeartPulse className="w-3.5 h-3.5 mr-1.5" /> Standar Kesehatan
             </div>
           </div>
         </div>
