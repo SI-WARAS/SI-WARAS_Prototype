@@ -41,6 +41,12 @@ const AddRecordModal = ({ isOpen, onClose, onAdd, isPending }) => {
             step="0.1" 
             {...register("cholesterol", { required: true })} 
           />
+          <Input 
+            label="Asam Urat" 
+            type="number" 
+            step="0.1" 
+            {...register("uricAcid", { required: true })} 
+          />
           <Select 
             label="Tingkat Aktivitas" 
             options={activityOptions} 
@@ -68,13 +74,13 @@ const AddRecordModal = ({ isOpen, onClose, onAdd, isPending }) => {
           <label className="block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Catatan Klinis</label>
           <textarea 
             {...register("notes")} 
-            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-[13px] bg-white hover:bg-slate-50 transition-all duration-200 outline-none" 
+            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-[13px] bg-white hover:bg-slate-50 transition-all duration-200 outline-none" 
             rows="3"
           />
         </div>
         <div className="flex justify-end pt-5 border-t border-slate-100">
           <button type="button" onClick={onClose} className="px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg mr-2 transition-colors">Batal</button>
-          <button type="submit" disabled={isPending} className="px-5 py-2.5 text-[13px] font-medium bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors shadow-sm outline-none">
+          <button type="submit" disabled={isPending} className="px-5 py-2.5 text-[13px] font-medium bg-brand-primary text-white rounded-lg hover:bg-brand-primary/90 transition-colors shadow-sm outline-none">
             {isPending ? 'Menyimpan...' : 'Simpan Log'}
           </button>
         </div>

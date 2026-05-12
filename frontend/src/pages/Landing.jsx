@@ -5,7 +5,7 @@ import { Activity, ShieldCheck, HeartPulse, LineChart, FileText, Users, ArrowRig
 const Landing = () => {
   return (
     <div className="min-h-screen bg-brand-bg font-sans text-[#2d2a26] overflow-x-hidden selection:bg-brand-light selection:text-brand-primary">
-      
+
       {/* Navigation */}
       <nav className="w-full py-6 px-8 flex justify-between items-center max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
@@ -19,7 +19,7 @@ const Landing = () => {
           <a href="#fitur" className="hover:text-brand-primary transition-colors">Fitur</a>
           <a href="#statistik" className="hover:text-brand-primary transition-colors">Statistik</a>
         </div>
-        <Link 
+        <Link
           to="/login"
           className="flex items-center gap-2 bg-transparent border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-brand-light px-6 py-2.5 rounded-full text-[13px] font-bold uppercase tracking-wider transition-all duration-300"
         >
@@ -29,27 +29,27 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="flex-1"
         >
           <h1 className="text-5xl md:text-7xl font-serif text-brand-primary leading-[1.1] tracking-tight mb-6">
-            Sistem Informasi <br/>
+            Sistem Informasi <br />
             <span className="italic text-[#2d2a26]">Warasing</span> Desa
           </h1>
           <p className="text-lg text-slate-600 mb-10 max-w-lg leading-relaxed">
             Platform modern untuk monitoring penyakit tidak menular (PTM) dan rekam medis pasien di tingkat desa. Menciptakan lingkungan yang lebih sehat untuk generasi mendatang.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link 
+            <Link
               to="/login"
               className="bg-brand-primary text-brand-light px-8 py-4 rounded-full text-[14px] font-bold uppercase tracking-wider hover:shadow-[0_8px_30px_rgb(158,31,99,0.3)] hover:-translate-y-1 transition-all duration-300"
             >
               Masuk Dashboard
             </Link>
-            <a 
+            <a
               href="#tentang"
               className="px-8 py-4 rounded-full text-[14px] font-bold uppercase tracking-wider text-brand-primary hover:bg-brand-light transition-all duration-300"
             >
@@ -58,7 +58,7 @@ const Landing = () => {
           </div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -108,7 +108,7 @@ const Landing = () => {
           <div className="flex-1">
             <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-brand-primary mb-4">Tentang Sistem</h2>
             <h3 className="text-4xl md:text-5xl font-serif text-slate-800 leading-tight mb-6">
-              Membangun Ekosistem <br/><span className="italic text-brand-primary">Kesehatan yang Presisi</span>
+              Membangun Ekosistem <br /><span className="italic text-brand-primary">Kesehatan yang Presisi</span>
             </h3>
           </div>
           <div className="flex-1">
@@ -125,13 +125,13 @@ const Landing = () => {
       {/* Fitur Utama */}
       <section id="fitur" className="py-32 bg-brand-primary text-brand-light px-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-light opacity-5 blur-3xl rounded-full translate-x-1/2"></div>
-        
+
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-20">
             <h2 className="text-[12px] font-bold uppercase tracking-[0.2em] text-brand-light mb-4">Fitur Utama</h2>
             <h3 className="text-4xl md:text-5xl font-serif text-white">Fasilitas Pemantauan</h3>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { icon: HeartPulse, title: 'Monitoring PTM', desc: 'Pemantauan berkala pasien Hipertensi, Diabetes, dan Kolesterol.' },
@@ -162,7 +162,7 @@ const Landing = () => {
             { value: '4,285', label: 'Total Pasien' },
             { value: '1,240', label: 'Kasus Hipertensi' },
             { value: '890', label: 'Kasus Diabetes' },
-            { value: '12', label: 'Dusun Terpantau' },
+            { value: '14', label: 'Dusun Terpantau' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
               <div className="text-5xl font-serif text-brand-primary mb-2">{stat.value}</div>
@@ -186,7 +186,7 @@ const Landing = () => {
               Menciptakan ruang hidup yang lebih sehat dengan pemantauan medis minimalis dan dampak lingkungan yang ramah, mewujudkan desa hijau satu langkah pada satu waktu.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-12">
             <div>
               <h4 className="text-[11px] font-bold uppercase tracking-widest text-brand-primary mb-6">Navigasi</h4>
@@ -199,22 +199,22 @@ const Landing = () => {
             <div>
               <h4 className="text-[11px] font-bold uppercase tracking-widest text-brand-primary mb-6">Kontak</h4>
               <ul className="space-y-4 text-[14px] text-slate-500">
-                <li>Puskesmas Desa Caturharjo</li>
+                <li>Puskesmas Pandak II</li>
                 <li>Email: hello@siwaras.desa.id</li>
                 <li>Telp: (0274) 123456</li>
               </ul>
             </div>
           </div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-slate-400 font-medium">
           <p>&copy; 2026 SI-WARAS Desa. Hak Cipta Dilindungi.</p>
           <div className="flex items-center gap-1">
-            Dikembangkan dengan <HeartPulse className="w-3 h-3 text-brand-primary" /> untuk kesehatan yang lebih baik.
+            Dikembangkan oleh <HeartPulse className="w-3 h-3 text-brand-primary" /> PPK Ormawa IMM FKM 2025.
           </div>
         </div>
       </footer>
-      
+
     </div>
   );
 };

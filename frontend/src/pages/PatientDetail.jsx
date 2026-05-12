@@ -13,25 +13,13 @@ import AddRecordModal from '../components/medical/AddRecordModal';
 import EditRecordModal from '../components/medical/EditRecordModal';
 import DeleteRecordModal from '../components/medical/DeleteRecordModal';
 
-const getBPStatus = (bp) => {
-  if (!bp) return 'normal';
-  const [sys, dia] = bp.split('/').map(Number);
-  if (sys > 140 || dia > 90) return 'bahaya';
-  if (sys > 120 || dia > 80) return 'waspada';
-  return 'normal';
-};
-
-const getBSStatus = (bs) => {
-  if (bs > 200) return 'bahaya';
-  if (bs > 140) return 'waspada';
-  return 'normal';
-};
+import { getBPStatus, getBSStatus, getUAStatus } from '../utils/healthLogic';
 
 const StatusBadge = ({ status, text }) => {
   const styles = {
     normal: 'bg-emerald-50 text-emerald-700 border-emerald-100',
     waspada: 'bg-amber-50 text-amber-700 border-amber-100',
-    bahaya: 'bg-rose-50 text-rose-700 border-rose-100',
+    bahaya: 'bg-brand-light/30 text-brand-primary border-brand-light',
   };
   return (
     <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase border ${styles[status]}`}>
@@ -126,7 +114,7 @@ const PatientDetail = () => {
         {/* Profile Card */}
         <div className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50 lg:col-span-1 h-fit">
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100/50">
-            <div className="w-16 h-16 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 font-bold text-2xl">
+            <div className="w-16 h-16 rounded-full bg-brand-light/30 border border-brand-light flex items-center justify-center text-brand-primary font-bold text-2xl">
               {patient.name.charAt(0)}
             </div>
             <div>
@@ -167,7 +155,7 @@ const PatientDetail = () => {
             <h3 className="text-lg font-bold text-slate-800">Riwayat Medis</h3>
             <button 
               onClick={() => setIsAddModalOpen(true)}
-              className="flex items-center px-4 py-2 bg-rose-600 text-white text-[13px] font-medium rounded-lg hover:bg-rose-700 transition-colors shadow-sm outline-none"
+              className="flex items-center px-4 py-2 bg-brand-primary text-white text-[13px] font-medium rounded-lg hover:bg-brand-primary/90 transition-colors shadow-sm outline-none"
             >
               <Plus className="w-4 h-4 mr-1.5" /> Tambah Log
             </button>
@@ -185,7 +173,7 @@ const PatientDetail = () => {
                 const bsStatus = getBSStatus(record.bloodSugar);
 
                 return (
-                  <div key={record.id} className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50 hover:border-rose-100 transition-colors group">
+                  <div key={record.id} className="bg-white p-6 rounded-[20px] shadow-soft border border-slate-100/50 hover:border-brand-primary/20 transition-colors group">
                     <div className="flex justify-between items-center mb-5 pb-4 border-b border-slate-100/50">
                       <span className="text-[13px] font-semibold text-slate-700 flex items-center">
                         <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center mr-3">
@@ -194,10 +182,10 @@ const PatientDetail = () => {
                         {format(new Date(record.date), 'dd MMM yyyy, HH:mm')}
                       </span>
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => setEditRecord(record)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                        <button onClick={() => setEditRecord(record)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-light/30 rounded-lg transition-colors">
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button onClick={() => setDeleteRecordId(record.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                        <button onClick={() => setDeleteRecordId(record.id)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-light/30 rounded-lg transition-colors">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -233,9 +221,19 @@ const PatientDetail = () => {
 
                       <div>
                         <div className="flex items-center text-slate-400 mb-1.5 text-[10px] font-bold uppercase tracking-wider">
-                          <Scale className="w-3 h-3 mr-1" /> BMI
+                          Asam Urat
                         </div>
-                        <span className="font-semibold text-slate-800 text-[15px]">{record.weight}kg / {record.height}cm</span>
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-slate-800 text-[15px]">{record.uricAcid}</span>
+                          <StatusBadge status={getUAStatus(record.uricAcid, patient.gender)} />
+                        </div>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <div className="flex items-center text-slate-400 mb-1.5 text-[10px] font-bold uppercase tracking-wider">
+                          <Scale className="w-3 h-3 mr-1" /> BMI & Fisik
+                        </div>
+                        <span className="font-semibold text-slate-800 text-[13px]">{record.weight}kg / {record.height}cm • {record.activityLevel} Activity</span>
                       </div>
                     </div>
 

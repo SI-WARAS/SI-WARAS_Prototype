@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { getBPStatus, getBSStatus, getCholesterolStatus, getUAStatus } = require('../utils/healthLogic');
 
 exports.getStats = async (req, res) => {
   try {
@@ -18,6 +19,8 @@ exports.getStats = async (req, res) => {
 
     let hypertensionCount = 0;
     let diabetesCount = 0;
+    let cholesterolCount = 0;
+    let uricAcidCount = 0;
     let otherCasesCount = 0;
     
     const PADUKUHAN_LIST = [
@@ -44,23 +47,29 @@ exports.getStats = async (req, res) => {
       // Disease stats based on latest record
       if (p.medicalRecords.length > 0) {
         const latest = p.medicalRecords[0];
+        let hasPtm = false;
         
-        // Hypertension logic (systolic >= 140 or diastolic >= 90)
-        const [sys, dia] = latest.bloodPressure.split('/').map(Number);
-        let hasHtn = false;
-        if (sys >= 140 || dia >= 90) {
+        if (getBPStatus(latest.bloodPressure) === 'bahaya') {
           hypertensionCount++;
-          hasHtn = true;
+          hasPtm = true;
         }
 
-        // Diabetes logic (random blood sugar >= 200)
-        let hasDm = false;
-        if (latest.bloodSugar >= 200) {
+        if (getBSStatus(latest.bloodSugar) === 'bahaya') {
           diabetesCount++;
-          hasDm = true;
+          hasPtm = true;
+        }
+
+        if (getCholesterolStatus(latest.cholesterol) === 'bahaya') {
+          cholesterolCount++;
+          hasPtm = true;
+        }
+
+        if (getUAStatus(latest.uricAcid, p.gender) === 'bahaya') {
+          uricAcidCount++;
+          hasPtm = true;
         }
         
-        if (!hasHtn && !hasDm) {
+        if (!hasPtm) {
           otherCasesCount++;
         }
       } else {
@@ -73,6 +82,8 @@ exports.getStats = async (req, res) => {
       ptmCases: {
         hypertension: hypertensionCount,
         diabetes: diabetesCount,
+        cholesterol: cholesterolCount,
+        uricAcid: uricAcidCount,
         other: otherCasesCount
       },
       areaStats: dusunStats

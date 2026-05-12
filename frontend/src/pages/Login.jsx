@@ -22,11 +22,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-rose-100 selection:text-rose-900">
+    <div className="min-h-screen bg-brand-bg flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-brand-light selection:text-brand-primary">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="w-16 h-16 bg-rose-600 rounded-2xl shadow-[0_8px_30px_rgb(225,29,72,0.3)] flex items-center justify-center transform transition-transform hover:scale-105">
-            <Activity className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 bg-brand-primary rounded-2xl shadow-[0_8px_30px_rgba(158,31,99,0.3)] flex items-center justify-center transform transition-transform hover:scale-105">
+            <Activity className="w-8 h-8 text-brand-light" />
           </div>
         </div>
         <h2 className="mt-8 text-center text-3xl font-bold text-slate-900 tracking-tight">
@@ -41,7 +41,7 @@ const Login = () => {
         <div className="bg-white py-10 px-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 sm:rounded-3xl sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             {serverError && (
-              <div className="bg-rose-50 text-rose-600 p-4 rounded-xl text-[13px] font-medium border border-rose-100 flex items-center">
+              <div className="bg-brand-light/30 text-brand-primary p-4 rounded-xl text-[13px] font-medium border border-brand-light flex items-center">
                 {serverError}
               </div>
             )}
@@ -51,11 +51,11 @@ const Login = () => {
               <div className="relative rounded-xl shadow-sm">
                 <input
                   {...register("username", { required: "Nama Pengguna diperlukan" })}
-                  className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-slate-900 bg-slate-50/50 hover:bg-white focus:bg-white sm:text-[13px] transition-all duration-200 outline-none"
+                  className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-slate-900 bg-slate-50/50 hover:bg-white focus:bg-white sm:text-[13px] transition-all duration-200 outline-none"
                   placeholder="Masukkan nama pengguna"
                 />
               </div>
-              {errors.username && <p className="mt-1.5 text-[12px] font-medium text-rose-500">{errors.username.message}</p>}
+              {errors.username && <p className="mt-1.5 text-[12px] font-medium text-brand-primary">{errors.username.message}</p>}
             </div>
 
             <div>
@@ -64,18 +64,18 @@ const Login = () => {
                 <input
                   type="password"
                   {...register("password", { required: "Kata Sandi diperlukan" })}
-                  className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 text-slate-900 bg-slate-50/50 hover:bg-white focus:bg-white sm:text-[13px] transition-all duration-200 outline-none"
+                  className="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary text-slate-900 bg-slate-50/50 hover:bg-white focus:bg-white sm:text-[13px] transition-all duration-200 outline-none"
                   placeholder="••••••••"
                 />
               </div>
-              {errors.password && <p className="mt-1.5 text-[12px] font-medium text-rose-500">{errors.password.message}</p>}
+              {errors.password && <p className="mt-1.5 text-[12px] font-medium text-brand-primary">{errors.password.message}</p>}
             </div>
 
             <div className="pt-2">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-[14px] font-semibold text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-500/20 transition-all duration-200"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-[14px] font-semibold text-white bg-brand-primary hover:bg-brand-primary/90 focus:outline-none focus:ring-4 focus:ring-brand-primary/20 transition-all duration-200"
               >
                 {isLoading ? (
                   <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

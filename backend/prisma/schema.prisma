@@ -48,6 +48,7 @@ model MedicalRecord {
   bloodPressure  String   // e.g., "120/80"
   bloodSugar     Float
   cholesterol    Float
+  uricAcid       Float    @default(0)
   weight         Float
   height         Float
   smokingStatus  Boolean
