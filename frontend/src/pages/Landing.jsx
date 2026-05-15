@@ -1,8 +1,20 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Activity, ShieldCheck, HeartPulse, LineChart, FileText, Users, ArrowRight, Home } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import api from '../lib/axios';
+
+const fetchPublicStats = async () => {
+  const { data } = await api.get('/dashboard/public-stats');
+  return data;
+};
 
 const Landing = () => {
+  const { data: stats } = useQuery({
+    queryKey: ['publicDashboardStats'],
+    queryFn: fetchPublicStats,
+  });
+
   return (
     <div className="min-h-screen bg-brand-bg font-sans text-[#2d2a26] overflow-x-hidden selection:bg-brand-light selection:text-brand-primary">
 
@@ -78,7 +90,9 @@ const Landing = () => {
               <div className="h-24 bg-brand-bg rounded-2xl p-4 flex items-center justify-between">
                 <div>
                   <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Kasus Hipertensi</div>
-                  <div className="text-3xl font-serif text-brand-primary">124</div>
+                  <div className="text-3xl font-serif text-brand-primary">
+                    {stats?.ptmCases?.hypertension !== undefined ? stats.ptmCases.hypertension : '...'}
+                  </div>
                 </div>
                 <HeartPulse className="w-8 h-8 text-brand-primary opacity-20" />
               </div>
@@ -159,10 +173,10 @@ const Landing = () => {
       <section id="statistik" className="py-32 px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {[
-            { value: '4,285', label: 'Total Pasien' },
-            { value: '1,240', label: 'Kasus Hipertensi' },
-            { value: '890', label: 'Kasus Diabetes' },
-            { value: '14', label: 'Dusun Terpantau' },
+            { value: stats?.totalPatients !== undefined ? stats.totalPatients : '...', label: 'Total Pasien' },
+            { value: stats?.ptmCases?.hypertension !== undefined ? stats.ptmCases.hypertension : '...', label: 'Kasus Hipertensi' },
+            { value: stats?.ptmCases?.diabetes !== undefined ? stats.ptmCases.diabetes : '...', label: 'Kasus Diabetes' },
+            { value: stats?.areaStats ? Object.keys(stats.areaStats).filter(k => k !== 'Lainnya' && stats.areaStats[k] > 0).length : '...', label: 'Dusun Terpantau' },
           ].map((stat, i) => (
             <div key={i} className="text-center">
               <div className="text-5xl font-serif text-brand-primary mb-2">{stat.value}</div>
@@ -199,7 +213,7 @@ const Landing = () => {
             <div>
               <h4 className="text-[11px] font-bold uppercase tracking-widest text-brand-primary mb-6">Kontak</h4>
               <ul className="space-y-4 text-[14px] text-slate-500">
-                <li>Puskesmas Pandak II</li>
+                <li>PPK Ormawa IMM FKM 2026</li>
                 <li>Email: hello@siwaras.desa.id</li>
                 <li>Telp: (0274) 123456</li>
               </ul>
@@ -208,9 +222,9 @@ const Landing = () => {
         </div>
 
         <div className="max-w-7xl mx-auto pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-[12px] text-slate-400 font-medium">
-          <p>&copy; 2026 SI-WARAS Desa. Hak Cipta Dilindungi.</p>
+          <p>&copy; 2026 SI-WARAS. Hak Cipta Dilindungi.</p>
           <div className="flex items-center gap-1">
-            Dikembangkan oleh <HeartPulse className="w-3 h-3 text-brand-primary" /> PPK Ormawa IMM FKM 2025.
+            Dikembangkan oleh <HeartPulse className="w-3 h-3 text-brand-primary" /> PPK Ormawa IMM FKM 2026.
           </div>
         </div>
       </footer>
