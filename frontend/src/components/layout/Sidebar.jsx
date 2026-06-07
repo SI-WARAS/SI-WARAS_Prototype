@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Settings, LogOut, Activity, Menu, X, HelpCircle, FileText } from 'lucide-react';
+import { Home, Users, Settings, LogOut, Activity, Menu, X, FileText, UploadCloud } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getBasePath } from '../../utils/roleHelpers';
@@ -9,7 +9,6 @@ const Sidebar = () => {
   const location = useLocation();
   const { logout, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [showSupport, setShowSupport] = useState(true);
 
   const basePath = getBasePath(user?.role);
 
@@ -20,6 +19,7 @@ const Sidebar = () => {
   if (user?.role === 'ADMIN' || user?.role === 'HEALTH_WORKER') {
     navItems.push({ name: 'Pasien', path: `${basePath}/patients`, icon: Users });
     navItems.push({ name: 'Rekam Medis', path: `${basePath}/records`, icon: Activity });
+    navItems.push({ name: 'Import Data', path: `${basePath}/import`, icon: UploadCloud });
   }
 
   navItems.push({ name: 'Laporan', path: `${basePath}/reports`, icon: FileText });
@@ -34,9 +34,7 @@ const Sidebar = () => {
     <>
       <div className="h-20 flex items-center justify-between px-6 border-b border-transparent">
         <div className="flex items-center">
-          <div className="bg-rose-500 text-white p-1.5 rounded-lg mr-3 shadow-sm">
-            <Activity className="w-5 h-5" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="w-8 h-8 mr-3 object-contain" />
           <span className="text-[17px] font-bold text-slate-800 tracking-tight">
             SI-WARAS
           </span>
@@ -71,27 +69,6 @@ const Sidebar = () => {
       </nav>
 
       <div className="p-4 flex flex-col gap-2">
-        {showSupport && (
-          <div className="bg-gradient-to-br from-rose-500 to-rose-700 rounded-2xl p-4 text-white shadow-soft relative overflow-hidden mb-2">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-bl-full pointer-events-none"></div>
-            <div className="relative z-10 flex items-center justify-between mb-3">
-              <div className="p-1.5 bg-white/20 rounded-lg backdrop-blur-sm">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <button onClick={() => setShowSupport(false)} className="text-white/60 hover:text-white transition-colors">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <h4 className="font-semibold text-[13px] relative z-10">Butuh Bantuan?</h4>
-            <p className="text-[11px] text-rose-100 mt-1 mb-4 relative z-10 leading-relaxed">
-              Hubungi administrator untuk bantuan sistem atau fitur premium.
-            </p>
-            <button className="w-full py-2 bg-white/10 hover:bg-white text-white hover:text-rose-700 text-[11px] font-bold rounded-lg transition-colors border border-white/20 hover:border-transparent relative z-10">
-              Hubungi Admin
-            </button>
-          </div>
-        )}
-
         <div className="pt-2 border-t border-slate-100">
           <button
             onClick={logout}

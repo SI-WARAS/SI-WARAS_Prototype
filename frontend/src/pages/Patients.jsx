@@ -133,6 +133,7 @@ const Patients = () => {
     }
 
     resetEdit({
+      nik: patient.nik || '',
       name: patient.name,
       age: patient.age,
       gender: patient.gender,
@@ -220,8 +221,8 @@ const Patients = () => {
                 <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('name')}>
                   Nama & Kontak <SortIcon field="name" />
                 </th>
-                <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('id')}>
-                  ID (NIK) <SortIcon field="id" />
+                <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('nik')}>
+                  ID (NIK) <SortIcon field="nik" />
                 </th>
                 <th className="px-6 py-4 cursor-pointer hover:text-slate-600" onClick={() => handleSort('age')}>
                   Umur & J.Kelamin <SortIcon field="age" />
@@ -257,7 +258,7 @@ const Patients = () => {
                         <div className="text-[11px] text-slate-400 mt-0.5">{patient.phone || 'Tanpa telepon'}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-500 font-mono text-[12px]">{patient.id.substring(0, 8)}...</td>
+                    <td className="px-6 py-4 text-slate-500 font-mono text-[12px]">{patient.nik || '-'}</td>
                     <td className="px-6 py-4 text-[13px] text-slate-600">
                       <span className="font-medium text-slate-700">{patient.age}</span> thn • <span className="capitalize">{patient.gender === 'MALE' ? 'Laki-laki' : 'Perempuan'}</span>
                     </td>
@@ -319,6 +320,7 @@ const Patients = () => {
       {/* Add Modal */}
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Daftarkan Pasien">
         <form onSubmit={handleSubmit(onSubmitAdd)} className="space-y-5">
+          <Input label="NIK (Nomor Induk Kependudukan)" type="text" {...register("nik", { required: true })} placeholder="Misal: 3402160101780001" />
           <Input label="Nama Lengkap" {...register("name", { required: true })} placeholder="Budi Santoso" />
           <div className="grid grid-cols-2 gap-4">
             <Input label="Umur" type="number" {...register("age", { required: true })} placeholder="Misal: 45" />
@@ -341,6 +343,7 @@ const Patients = () => {
       {/* Edit Modal */}
       <Modal isOpen={!!editPatient} onClose={() => setEditPatient(null)} title="Perbarui Pasien">
         <form onSubmit={handleSubmitEdit(onSubmitEdit)} className="space-y-5">
+          <Input label="NIK (Nomor Induk Kependudukan)" type="text" {...registerEdit("nik", { required: true })} />
           <Input label="Nama Lengkap" {...registerEdit("name", { required: true })} />
           <div className="grid grid-cols-2 gap-4">
             <Input label="Umur" type="number" {...registerEdit("age", { required: true })} />

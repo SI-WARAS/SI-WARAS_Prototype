@@ -8,6 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import FontController from './FontController';
+
 const Navbar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -109,6 +111,9 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-3 sm:space-x-4">
+        {/* Accessibility Typography Resizer */}
+        <FontController />
+
         <button onClick={handleThemeToggle} className="w-9 h-9 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors outline-none">
           <Sun className="w-4 h-4" />
         </button>

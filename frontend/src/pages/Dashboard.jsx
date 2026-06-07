@@ -145,7 +145,7 @@ const Dashboard = () => {
     datasets: [
       {
         label: 'Pasien Baru',
-        data: [5, 12, 18, 15, 25, totalPatients],
+        data: [0, 0, 0, 0, 0, totalPatients],
         borderColor: '#C2185B', // New Primary
         backgroundColor: 'rgba(194, 24, 91, 0.08)',
         tension: 0.4,

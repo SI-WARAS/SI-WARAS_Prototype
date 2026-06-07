@@ -17,6 +17,8 @@
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    font-size: var(--app-font-scale, 1rem);
+    transition: font-size 0.15s ease-in-out;
   }
   body {
     @apply bg-brand-bg text-slate-800 antialiased;

@@ -1,8 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+const { prisma } = require('../utils/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const prisma = new PrismaClient();
 
 exports.login = async (req, res) => {
   try {
@@ -23,7 +21,7 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role, name: user.name },
+      { id: user.id, username: user.username, role: user.role, name: user.name, pedukuhanId: user.pedukuhanId },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
@@ -35,7 +33,8 @@ exports.login = async (req, res) => {
         id: user.id,
         username: user.username,
         role: user.role,
-        name: user.name
+        name: user.name,
+        pedukuhanId: user.pedukuhanId
       }
     });
   } catch (error) {

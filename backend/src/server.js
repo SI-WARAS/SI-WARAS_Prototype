@@ -35,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/records', recordRoutes);
+app.use('/api/medis', recordRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 // Error handling middleware

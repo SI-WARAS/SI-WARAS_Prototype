@@ -9,6 +9,7 @@ import Patients from './pages/Patients';
 import PatientDetail from './pages/PatientDetail';
 import Records from './pages/Records';
 import Reports from './pages/Reports';
+import ImportData from './pages/ImportData';
 import Settings from './pages/Settings';
 
 import Landing from './pages/Landing';
@@ -44,6 +45,7 @@ function AppRoutes() {
         <Route path="patients/:id" element={<PatientDetail />} />
         <Route path="records" element={<Records />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="import" element={<ImportData />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 
@@ -55,6 +57,7 @@ function AppRoutes() {
         <Route path="patients/:id" element={<PatientDetail />} />
         <Route path="records" element={<Records />} />
         <Route path="reports" element={<Reports />} />
+        <Route path="import" element={<ImportData />} />
       </Route>
 
       {/* Kepala Desa Routes */}

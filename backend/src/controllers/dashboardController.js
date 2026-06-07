@@ -1,15 +1,14 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { prisma } = require('../utils/db');
 const { getBPStatus, getBSStatus, getCholesterolStatus, getUAStatus } = require('../utils/healthLogic');
 
 exports.getStats = async (req, res) => {
   try {
     const totalPatients = await prisma.patient.count();
     
-    // In a real app we would write complex queries or use aggregations
-    // For simplicity, we'll fetch all records and calculate stats
+    // Fetch patients and latest medical records, including pedukuhan info
     const patients = await prisma.patient.findMany({
       include: {
+        pedukuhan: true,
         medicalRecords: {
           orderBy: { date: 'desc' },
           take: 1
@@ -34,15 +33,24 @@ exports.getStats = async (req, res) => {
     dusunStats['Lainnya'] = 0;
 
     patients.forEach(p => {
-      // Area stats matching against exact padukuhan names
+      // Area stats matching against pedukuhan relation first, fallback to address parsing
       let matchedDusun = 'Lainnya';
-      for (const dusun of PADUKUHAN_LIST) {
-        if (p.address && p.address.toLowerCase().includes(dusun.toLowerCase())) {
-          matchedDusun = dusun;
-          break;
+      if (p.pedukuhan && p.pedukuhan.name) {
+        matchedDusun = p.pedukuhan.name;
+      } else {
+        for (const dusun of PADUKUHAN_LIST) {
+          if (p.address && p.address.toLowerCase().includes(dusun.toLowerCase())) {
+            matchedDusun = dusun;
+            break;
+          }
         }
       }
-      dusunStats[matchedDusun]++;
+      
+      if (dusunStats[matchedDusun] !== undefined) {
+        dusunStats[matchedDusun]++;
+      } else {
+        dusunStats['Lainnya']++;
+      }
 
       // Disease stats based on latest record
       if (p.medicalRecords.length > 0) {

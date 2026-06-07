@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  password  String
-  role      Role     @default(HEALTH_WORKER)
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String      @id @default(uuid())
+  username    String      @unique
+  password    String
+  role        Role        @default(HEALTH_WORKER)
+  name        String
+  pedukuhanId String?
+  pedukuhan   Pedukuhan?  @relation(fields: [pedukuhanId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 enum Role {
@@ -25,11 +27,14 @@ enum Role {
 
 model Patient {
   id             String          @id @default(uuid()) // Can also be manual string like NIK
+  nik            String?         @unique
   name           String
   age            Int
   gender         Gender
   address        String
   phone          String?
+  pedukuhanId    String?
+  pedukuhan      Pedukuhan?      @relation(fields: [pedukuhanId], references: [id])
   medicalRecords MedicalRecord[]
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
@@ -41,24 +46,39 @@ enum Gender {
 }
 
 model MedicalRecord {
-  id             String   @id @default(uuid())
-  patientId      String
-  patient        Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  date           DateTime @default(now())
-  bloodPressure  String   // e.g., "120/80"
-  bloodSugar     Float
-  cholesterol    Float
-  uricAcid       Float    @default(0)
-  weight         Float
-  height         Float
-  smokingStatus  Boolean
-  activityLevel  ActivityLevel
-  notes          String?
-  createdAt      DateTime @default(now())
+  id                  String        @id @default(uuid())
+  patientId           String
+  patient             Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  date                DateTime      @default(now())
+  bloodPressure       String        // e.g., "120/80"
+  bloodSugar          Float
+  cholesterol         Float
+  uricAcid            Float         @default(0)
+  weight              Float
+  height              Float
+  smokingStatus       Boolean
+  activityLevel       ActivityLevel
+  notes               String?
+  bmi                 Float?
+  bloodPressureStatus String?
+  bloodSugarStatus    String?
+  cholesterolStatus   String?
+  uricAcidStatus      String?
+  isRisk              Boolean       @default(false)
+  createdAt           DateTime      @default(now())
 }
 
 enum ActivityLevel {
   LOW
   MODERATE
   HIGH
+}
+
+model Pedukuhan {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  users     User[]
+  patients  Patient[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

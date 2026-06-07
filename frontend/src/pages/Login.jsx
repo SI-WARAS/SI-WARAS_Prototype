@@ -25,8 +25,8 @@ const Login = () => {
     <div className="min-h-screen bg-brand-bg flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-brand-light selection:text-brand-primary">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="w-16 h-16 bg-brand-primary rounded-2xl shadow-[0_8px_30px_rgba(158,31,99,0.3)] flex items-center justify-center transform transition-transform hover:scale-105">
-            <Activity className="w-8 h-8 text-brand-light" />
+          <div className="flex justify-center transform transition-transform hover:scale-105">
+            <img src="/logo.png" alt="Logo SI-WARAS" className="w-24 h-24 object-contain" />
           </div>
         </div>
         <h2 className="mt-8 text-center text-3xl font-bold text-slate-900 tracking-tight">

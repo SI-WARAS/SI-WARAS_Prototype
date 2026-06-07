@@ -21,9 +21,7 @@ const Landing = () => {
       {/* Navigation */}
       <nav className="w-full py-6 px-8 flex justify-between items-center max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
-          <div className="bg-brand-primary p-2 rounded-xl text-brand-light">
-            <Activity className="w-6 h-6" />
-          </div>
+          <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
           <span className="text-xl font-bold tracking-tight text-brand-primary">SI-WARAS</span>
         </div>
         <div className="hidden md:flex items-center gap-8 text-[13px] font-semibold tracking-wide uppercase">
@@ -191,9 +189,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
           <div className="max-w-sm">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-brand-primary p-2 rounded-xl text-brand-light">
-                <Activity className="w-6 h-6" />
-              </div>
+              <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
               <span className="text-2xl font-serif font-bold tracking-tight text-brand-primary">SI-WARAS</span>
             </div>
             <p className="text-slate-500 text-[14px] leading-relaxed">
